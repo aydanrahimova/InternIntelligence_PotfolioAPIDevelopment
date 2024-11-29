@@ -24,6 +24,7 @@ public class Project {
     private LocalDate endTime;//past
     private String projectUrl;
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
 

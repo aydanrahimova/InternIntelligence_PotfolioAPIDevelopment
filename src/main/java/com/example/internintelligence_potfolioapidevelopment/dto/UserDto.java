@@ -26,14 +26,11 @@ public class UserDto {
     @Email(message = "Invalid email format.")
     private String email;
 
-    @NotBlank(message = "Password is required.")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$"
-            ,message = "Invalid Password: Must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one digit, and one special character."
-    )
-    private String password;
-
-    @NotBlank(message = "Password confirmation is required.")
-    private String passwordConfirm;
+//    @NotBlank(message = "Password is required.")
+//    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$"
+//            ,message = "Invalid Password: Must be at least 8 characters long, with at least one uppercase letter, one lowercase letter, one digit, and one special character."
+//    )
+//    private String password;
 
     @Size(min = 2,max = 100,message = "Title must be between 2 and 100 characters.")
     private String title;

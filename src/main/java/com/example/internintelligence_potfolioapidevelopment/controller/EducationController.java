@@ -31,18 +31,18 @@ public class EducationController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/me/add")
+    @PostMapping("/add")
     public EducationDto addEducation(HttpServletRequest request, @Validated @RequestBody EducationDto dto) {
         return educationService.addEducation(request, dto);
     }
 
-    @PutMapping("/me/edit/{eductionId}")
+    @PutMapping("/edit/{eductionId}")
     public EducationDto editEducationOfUser(HttpServletRequest request, @PathVariable Long eductionId, @Validated @RequestBody EducationDto educationDto) {
         return educationService.editEducationOfUser(request, eductionId, educationDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/me/delete/{educationId}")
+    @DeleteMapping("/delete/{educationId}")
     public void deleteEducationOfUser(HttpServletRequest request, @PathVariable Long educationId) {
         educationService.deleteEducationOfUser(request, educationId);
     }

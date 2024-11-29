@@ -32,18 +32,18 @@ public class SkillController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/me/add")
+    @PostMapping("/add")
     public SkillDto addExperience(HttpServletRequest request, @Validated @RequestBody SkillDto skillDto){
         return skillService.addSkill(request,skillDto);
     }
 
-    @PutMapping("/me/edit/{skillId}")
+    @PutMapping("/edit/{skillId}")
     public SkillDto editExperience(HttpServletRequest request, @PathVariable Long skillId, @Validated @RequestBody SkillDto skillDto){
         return skillService.editSkill(request, skillId,skillDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/me/delete/{skillId}")
+    @DeleteMapping("/delete/{skillId}")
     public void deleteExperience(HttpServletRequest request,@PathVariable Long skillId){
         skillService.deleteSkill(request,skillId);
     }

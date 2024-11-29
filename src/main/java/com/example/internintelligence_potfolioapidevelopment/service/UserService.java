@@ -3,6 +3,8 @@ package com.example.internintelligence_potfolioapidevelopment.service;
 import com.example.internintelligence_potfolioapidevelopment.dao.entity.User;
 import com.example.internintelligence_potfolioapidevelopment.dao.repo.*;
 import com.example.internintelligence_potfolioapidevelopment.dto.*;
+import com.example.internintelligence_potfolioapidevelopment.dto.request.ChangePasswordDto;
+import com.example.internintelligence_potfolioapidevelopment.dto.request.UserDetailsRequestDto;
 import com.example.internintelligence_potfolioapidevelopment.exception.IllegalArgumentException;
 import com.example.internintelligence_potfolioapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_potfolioapidevelopment.mapper.*;
@@ -11,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,19 +26,13 @@ public class UserService {
     private final UserRepo userRepo;
     private final UserMapper userMapper;
     private final JwtUtil jwtUtil;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final ExperienceRepo experienceRepo;
-    private final ExperienceMapper experienceMapper;
-    private final ProjectRepo projectRepo;
-    private final ProjectMapper projectMapper;
-    private final SkillRepo skillRepo;
-    private final SkillMapper skillMapper;
+    private final PasswordEncoder passwordEncoder;
 
     public UserDto getOwnProfile(HttpServletRequest http) {
         Long userId = extractUserIdFromToken(http);
         log.info("Getting own profile operation is started.");
-        User user = userRepo.findById(userId).orElseThrow(()->{
-            log.warn("User with id {} not found.",userId);
+        User user = userRepo.findById(userId).orElseThrow(() -> {
+            log.warn("User with id {} not found.", userId);
             return new ResourceNotFoundException("USER_NOT_FOUND");
         });
         log.info("User profile returned.");
@@ -55,14 +51,14 @@ public class UserService {
         });
     }
 
-    public UserDto editUserInfo(HttpServletRequest http,UserEditDto editDto) {
+    public UserDto editUserInfo(HttpServletRequest http, UserDetailsRequestDto userDetailsRequestDto) {
         Long userId = extractUserIdFromToken(http);
         log.info("Editing user operation is started...");
-        User user = userRepo.findById(userId).orElseThrow(()->{
-            log.warn("User with id {} not found",userId);
+        User user = userRepo.findById(userId).orElseThrow(() -> {
+            log.warn("User with id {} not found", userId);
             return new ResourceNotFoundException("USER_NOT_FOUND");
         });
-        userMapper.mapForUpdate(user,editDto);
+        userMapper.mapForUpdate(user, userDetailsRequestDto);
         userRepo.save(user);
         log.info("User with ID {} successfully updated.", userId);
         return userMapper.toDto(user);
@@ -100,31 +96,6 @@ public class UserService {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(http));
     }
 
-
-    public List<ExperienceDto> getUserExperience(Long id) {
-        log.info("Attempting to get experience for user with id {}", id);
-
-        checkForUserExistence(id);
-
-        return experienceRepo.findByUserId(id).stream().map(experienceMapper::toDto).toList();
-    }
-
-    public List<ProjectDto> getUserProjects(Long id) {
-        log.info("Attempting to get projects for user with id {}", id);
-
-        checkForUserExistence(id);
-
-        return projectRepo.findByUserId(id).stream().map(projectMapper::toDto).toList();
-    }
-
-    public List<SkillDto> getUserSkills(Long id) {
-        log.info("Attempting to get skills for user with id {}", id);
-
-        checkForUserExistence(id);
-
-        return skillRepo.findByUserId(id).stream().map(skillMapper::toDto).toList();
-    }
-
     private void checkForUserExistence(Long id) {
         log.info("Checking for existence of user with id {}", id);
         if (!userRepo.existsById(id)) {
@@ -133,4 +104,9 @@ public class UserService {
         }
     }
 
+    public void deleteUser(Long userId) {
+    }
+
+    public void deleteOwnProfile() {
+    }
 }

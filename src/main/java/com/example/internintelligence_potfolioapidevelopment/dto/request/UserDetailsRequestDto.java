@@ -1,4 +1,4 @@
-package com.example.internintelligence_potfolioapidevelopment.dto;
+package com.example.internintelligence_potfolioapidevelopment.dto.request;
 
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserEditDto {
+public class UserDetailsRequestDto {
     @NotBlank(message = "First name is required.")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters.")
     @Pattern(regexp = "^[A-Za-z]+$", message = "First name can only contain letters.")

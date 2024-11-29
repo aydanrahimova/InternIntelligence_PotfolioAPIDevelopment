@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import java.security.Key;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 @Slf4j
 @Configuration
@@ -45,10 +45,9 @@ public class JwtUtil {
 
         List<String> roles = user.getAuthorities()
                 .stream()
-                .map(authority -> authority.getName().name())
+                .map(GrantedAuthority::getAuthority)
                 .toList();
         Map<String, Object> claimsMap = new HashMap<>();
-        claimsMap.put("email", user.getEmail());
         claimsMap.put("authorities", roles);
         claimsMap.put("user_id", user.getId());
 
@@ -61,35 +60,7 @@ public class JwtUtil {
                 .setExpiration(tokenValidity)
                 .addClaims(claimsMap)
                 .signWith(key, SignatureAlgorithm.HS512);
-        log.info("Jwt token created for user: {}", user.getEmail());
         return jwtBuilder.compact();
-
-    }
-
-    public Long getUserId(Claims claims){
-        return (Long) claims.get("user_id");
-    }
-
-    private Claims parseJwtClaims(String token) {
-        return Jwts.parser().setSigningKey(secret_key).parseClaimsJws(token).getBody();
-    }
-
-    public Claims resolveClaims(HttpServletRequest req) {
-        try {
-            String token = resolveToken(req);
-            if (token != null) {
-                return parseJwtClaims(token);
-            }
-            return null;
-        } catch (ExpiredJwtException ex) {
-            log.error("Error due to: {}", ex.getMessage());
-            req.setAttribute("expired", ex.getMessage());
-            throw ex;
-        } catch (Exception ex) {
-            log.error("Error due to: {}", ex.getMessage());
-            req.setAttribute("invalid", ex.getMessage());
-            throw ex;
-        }
     }
 
     public String resolveToken(HttpServletRequest request) {
@@ -103,17 +74,72 @@ public class JwtUtil {
         return null;
     }
 
-
-    public Collection<GrantedAuthority> extractAuthorities(Claims claims) {
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        if (claims.containsKey("authorities")) {
-            List<String> roles = (List<String>) claims.get("authorities");
-            for (String role : roles) {
-                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-            }
-        }
-        return authorities;
+    public boolean isTokenValid(String token, User user){
+        final String userEmail = extractEmail(token);
+        return userEmail.equals(user.getEmail()) && !isTokenExpired(token);
     }
+
+
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+    private Date extractExpiration(String token) {
+        return extractClaim(token,Claims::getExpiration);
+    }
+
+    public Long getUserId(Claims claims){
+        return (Long) claims.get("user_id");
+    }
+
+    public String extractEmail(String token){
+        return extractClaim(token,Claims::getSubject);
+    }
+
+    private Claims extractAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(initializeKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public <T> T extractClaim(String token, Function<Claims,T> claimResolver){
+        final Claims claims = extractAllClaims(token);
+        return claimResolver.apply(claims);
+    }
+
+
+    public Claims resolveClaims(HttpServletRequest req) {
+        try {
+            String token = resolveToken(req);
+            if (token != null) {
+                return extractAllClaims(token);
+            }
+            return null;
+        } catch (ExpiredJwtException ex) {
+            log.error("Error due to: {}", ex.getMessage());
+            req.setAttribute("expired", ex.getMessage());
+            throw ex;
+        } catch (Exception ex) {
+            log.error("Error due to: {}", ex.getMessage());
+            req.setAttribute("invalid", ex.getMessage());
+            throw ex;
+        }
+    }
+//
+//
+//    public Collection<GrantedAuthority> extractAuthorities(Claims claims) {
+//        Collection<GrantedAuthority> authorities = new ArrayList<>();
+//        if (claims.containsKey("authorities")) {
+//            List<String> roles = (List<String>) claims.get("authorities");
+//            for (String role : roles) {
+//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
+//            }
+//        }
+//        return authorities;
+//    }
 
 
 }

@@ -2,7 +2,9 @@ package com.example.internintelligence_potfolioapidevelopment.config;
 
 import com.example.internintelligence_potfolioapidevelopment.dao.entity.User;
 import com.example.internintelligence_potfolioapidevelopment.dao.repo.UserRepo;
+import com.example.internintelligence_potfolioapidevelopment.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -18,10 +20,10 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(email).orElseThrow();
+        User user = userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found."));
         List<String> roles = user.getAuthorities()
                 .stream()
-                .map(authority -> authority.getName().name()) // Assuming getName() returns an enum
+                .map(GrantedAuthority::getAuthority)
                 .toList();
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())

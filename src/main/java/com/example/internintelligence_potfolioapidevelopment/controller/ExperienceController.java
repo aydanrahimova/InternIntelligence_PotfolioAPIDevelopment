@@ -30,18 +30,18 @@ public class ExperienceController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/me/add")
+    @PostMapping("/add")
     public ExperienceDto addExperience(HttpServletRequest request, @Validated @RequestBody ExperienceDto experienceDto){
         return experienceService.addExperience(request,experienceDto);
     }
 
-    @PutMapping("/me/edit/{experienceId}")
+    @PutMapping("/edit/{experienceId}")
     public ExperienceDto editExperience(HttpServletRequest request,@PathVariable Long experienceId,@Validated @RequestBody ExperienceDto experienceDto){
         return experienceService.editExperience(request,experienceId,experienceDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping("/me/delete/{experienceId}")
+    @DeleteMapping("/delete/{experienceId}")
     public void deleteExperience(HttpServletRequest request,@PathVariable Long experienceId){
         experienceService.deleteExperience(request,experienceId);
     }

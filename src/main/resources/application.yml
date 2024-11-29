@@ -12,6 +12,9 @@ spring:
     url: jdbc:postgresql://localhost:5432/portfolio_api_db
     password: 2810
 
+  liquibase:
+    change-log: classpath:/liquibase/changelog-master.yml
+
 application:
   security:
     jwt:

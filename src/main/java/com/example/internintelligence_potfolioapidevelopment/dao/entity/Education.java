@@ -25,5 +25,6 @@ public class Education {
     private LocalDate startTime;
     private LocalDate endTime;
     @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
