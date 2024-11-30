@@ -49,8 +49,13 @@ public class User implements UserDetails {
 //    at org.hibernate.collection.spi.PersistentBag.iterator(PersistentBag.java:369) ~[hibernate-core-6.5.3.Final.jar:6.5.3.Final]
 //    at java.base/java.util.Spliterators$IteratorSpliterator.estimateSize(Spliterators.java:1959) ~[na:na]
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.EAGER)
-    @Enumerated(EnumType.STRING)
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "user_authority",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "authority_id")
+    )
     private List<Authority> authorities;
 
     public User(String email, String password) {
@@ -62,7 +67,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities.stream() // Stream through the authorities
-                .map(authority -> new SimpleGrantedAuthority(authority.getName().name())) // Convert each Authority to GrantedAuthority
+                .map(authority -> new SimpleGrantedAuthority("ROLE_"+authority.getName())) // Convert each Authority to GrantedAuthority
                 .collect(Collectors.toList());
     }
 
