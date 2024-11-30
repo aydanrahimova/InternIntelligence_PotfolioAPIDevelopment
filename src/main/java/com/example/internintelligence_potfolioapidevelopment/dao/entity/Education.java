@@ -19,7 +19,9 @@ public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false)
     private String schoolName;
+    @Enumerated(EnumType.STRING)
     private EducationDegree degree;
     private String fieldOfStudy;
     private LocalDate startTime;

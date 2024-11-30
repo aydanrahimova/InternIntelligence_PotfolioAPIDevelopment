@@ -128,18 +128,5 @@ public class JwtUtil {
             throw ex;
         }
     }
-//
-//
-//    public Collection<GrantedAuthority> extractAuthorities(Claims claims) {
-//        Collection<GrantedAuthority> authorities = new ArrayList<>();
-//        if (claims.containsKey("authorities")) {
-//            List<String> roles = (List<String>) claims.get("authorities");
-//            for (String role : roles) {
-//                authorities.add(new SimpleGrantedAuthority("ROLE_" + role));
-//            }
-//        }
-//        return authorities;
-//    }
-
 
 }

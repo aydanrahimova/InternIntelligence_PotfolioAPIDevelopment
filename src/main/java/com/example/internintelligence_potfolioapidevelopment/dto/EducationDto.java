@@ -1,5 +1,6 @@
 package com.example.internintelligence_potfolioapidevelopment.dto;
 
+import com.example.internintelligence_potfolioapidevelopment.enums.EducationDegree;
 import com.example.internintelligence_potfolioapidevelopment.validation.ValidDateRange;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 public class EducationDto {
     @NotBlank(message = "School is required.")
     private String schoolName;
-    private String degree;
+    private EducationDegree degree;
     private String fieldOfStudy;
     private LocalDate startTime;
     private LocalDate endTime;

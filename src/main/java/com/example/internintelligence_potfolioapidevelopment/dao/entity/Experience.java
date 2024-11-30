@@ -19,8 +19,10 @@ public class Experience {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+    @Column(nullable = false)
     private String title;
     private String description;
+    @Column(nullable = false)
     private String organizationName;
     @Enumerated(EnumType.STRING)
     private EmploymentType employmentType;

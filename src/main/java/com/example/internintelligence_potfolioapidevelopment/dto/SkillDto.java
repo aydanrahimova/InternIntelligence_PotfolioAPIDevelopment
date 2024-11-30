@@ -1,6 +1,8 @@
 package com.example.internintelligence_potfolioapidevelopment.dto;
 
+import com.example.internintelligence_potfolioapidevelopment.enums.SkillLevel;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +12,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class SkillDto {
-    @NotBlank(message = "Skill is required.")
+    @NotBlank(message = "Skill name is required.")
+    @Size(max = 50, message = "Skill name must not exceed 50 characters.")
     private String name;
-    private String level;
+    private SkillLevel level;
 }

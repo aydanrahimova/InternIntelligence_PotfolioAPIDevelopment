@@ -4,8 +4,9 @@ import com.example.internintelligence_potfolioapidevelopment.dao.entity.Experien
 import com.example.internintelligence_potfolioapidevelopment.dto.ExperienceDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ExperienceMapper{
     Experience toEntity(ExperienceDto dto);
     ExperienceDto toDto(Experience entity);

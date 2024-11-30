@@ -4,8 +4,9 @@ import com.example.internintelligence_potfolioapidevelopment.dao.entity.Educatio
 import com.example.internintelligence_potfolioapidevelopment.dto.EducationDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring",nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface EducationMapper {
     Education toEntity(EducationDto dto);
     EducationDto toDto(Education entity);

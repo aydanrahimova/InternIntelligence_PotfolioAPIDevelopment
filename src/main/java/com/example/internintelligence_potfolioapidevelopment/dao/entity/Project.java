@@ -18,10 +18,11 @@ public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;//255
-    private String description;//2000
-    private LocalDate startTime;//past
-    private LocalDate endTime;//past
+    @Column(nullable = false)
+    private String name;
+    private String description;
+    private LocalDate startTime;
+    private LocalDate endTime;
     private String projectUrl;
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -16,9 +16,9 @@ import java.time.LocalDate;
 public class ProjectDto {
     @NotBlank(message = "Project name is required.")
     @Size(max = 255, message = "The length of the name must not exceed 255 characters")
-    private String name;//255
+    private String name;
     @Size(max = 2000,message = "The length of the description must not exceed 255 characters")
-    private String description;//2000
+    private String description;
     @PastOrPresent(message = "Start time must be in past or present")
     private LocalDate startTime;
     @PastOrPresent(message = "End time must be in past or present")

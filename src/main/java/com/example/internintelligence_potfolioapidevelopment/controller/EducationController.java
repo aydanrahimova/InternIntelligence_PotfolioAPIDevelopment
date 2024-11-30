@@ -47,6 +47,4 @@ public class EducationController {
         educationService.deleteEducationOfUser(request, educationId);
     }
 
-
-
 }

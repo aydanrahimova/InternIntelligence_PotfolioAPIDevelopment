@@ -2,9 +2,11 @@ package com.example.internintelligence_potfolioapidevelopment.service;
 
 import com.example.internintelligence_potfolioapidevelopment.dao.entity.User;
 import com.example.internintelligence_potfolioapidevelopment.dao.repo.*;
-import com.example.internintelligence_potfolioapidevelopment.dto.*;
 import com.example.internintelligence_potfolioapidevelopment.dto.request.ChangePasswordDto;
-import com.example.internintelligence_potfolioapidevelopment.dto.request.UserDetailsRequestDto;
+import com.example.internintelligence_potfolioapidevelopment.dto.request.UserDetailsRequest;
+import com.example.internintelligence_potfolioapidevelopment.dto.response.UserDetailsResponse;
+import com.example.internintelligence_potfolioapidevelopment.dto.response.UserResponse;
+import com.example.internintelligence_potfolioapidevelopment.exception.ForbiddenException;
 import com.example.internintelligence_potfolioapidevelopment.exception.IllegalArgumentException;
 import com.example.internintelligence_potfolioapidevelopment.exception.ResourceNotFoundException;
 import com.example.internintelligence_potfolioapidevelopment.mapper.*;
@@ -30,84 +32,89 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final PasswordEncoder passwordEncoder;
 
-    public UserDto getOwnProfile(HttpServletRequest http) {
-        Integer userId = extractUserIdFromToken(http);
-        log.info("Getting own profile operation is started.");
-        User user = userRepo.findById(userId).orElseThrow(() -> {
-            log.warn("User with id {} not found.", userId);
-            return new ResourceNotFoundException("USER_NOT_FOUND");
-        });
-        log.info("User profile returned.");
-        return userMapper.toDto(user);
-    }
-
-    public UserDto getById(Integer id) {
+    public UserDetailsResponse getById(Integer id) {
         log.info("Attempting to get profile of user with id {}", id);
-        return userRepo.findById(id).map(user -> {
-            log.info("Successfully retrieved user with id {}", id);
-            return userMapper.toDto(user);
-        }).orElseThrow(() -> {
-            log.warn("User with id {} not found", id);
-            return new ResourceNotFoundException("User with id " + id + " not found");
-        });
+        return userRepo.findById(id)
+                .map(user -> {
+                    log.info("Successfully retrieved user with id {}", id);
+                    return userMapper.toDetailsResponse(user);
+                })
+                .orElseThrow(() -> {
+                    log.warn("User with id {} not found", id);
+                    return new ResourceNotFoundException("User with id " + id + " not found");
+                });
     }
 
-    public UserDto editUserInfo(HttpServletRequest http, UserDetailsRequestDto userDetailsRequestDto) {
-        Integer userId = extractUserIdFromToken(http);
+    public UserDetailsResponse editUserInfo(Integer id,HttpServletRequest http, UserDetailsRequest userDetailsRequest) {
+        Integer currentUserId = extractUserIdFromToken(http);
+        if(!id.equals(currentUserId)){
+            log.info("User with id {} attempted to edit another user's profile.", currentUserId);
+            throw new ForbiddenException("Forbidden access.");
+        }
         log.info("Editing user operation is started...");
-        User user = userRepo.findById(userId).orElseThrow(() -> {
-            log.warn("User with id {} not found", userId);
+        User user = userRepo.findById(currentUserId).orElseThrow(() -> {
+            log.warn("User with id {} not found", currentUserId);
             return new ResourceNotFoundException("USER_NOT_FOUND");
         });
-        userMapper.mapForUpdate(user, userDetailsRequestDto);
+        userMapper.mapForUpdate(user, userDetailsRequest);
         userRepo.save(user);
-        log.info("User with ID {} successfully updated.", userId);
-        return userMapper.toDto(user);
+        log.info("User with ID {} successfully updated.", currentUserId);
+        return userMapper.toDetailsResponse(user);
     }
 
-    public void changePassword(HttpServletRequest http, ChangePasswordDto changePasswordDto) {
-        Integer userId = extractUserIdFromToken(http);
+    public void changePassword(Integer id,HttpServletRequest http, ChangePasswordDto changePasswordDto) {
+        Integer currentUserId = extractUserIdFromToken(http);
+        if(!id.equals(currentUserId)){
+            log.info("User with id {} attempted to change password of another user's profile.", currentUserId);
+            throw new ForbiddenException("Forbidden access.");
+        }
         log.info("Changing password operation is started...");
-        User user = userRepo.findById(userId).orElseThrow(() -> {
-            log.warn("User with id {} not found", userId);
+        User user = userRepo.findById(currentUserId).orElseThrow(() -> {
+            log.warn("User with id {} not found", currentUserId);
             return new ResourceNotFoundException("USER_NOT_FOUND");
         });
         if (changePasswordDto.getNewPassword().equals(changePasswordDto.getRetryPassword()) &&
                 passwordEncoder.matches(changePasswordDto.getCurrentPassword(), user.getPassword())) {
             user.setPassword(passwordEncoder.encode(changePasswordDto.getNewPassword()));
             userRepo.save(user);
-            log.info("Password for user with id {} changed.", userId);
+            log.info("Password for user with id {} changed.", currentUserId);
         } else {
             log.error("Failed to change password");
             throw new IllegalArgumentException("Old password entered incorrectly or new passwords do not match");
         }
     }
 
-    public List<UserDto> getAll() {
-        log.info("Attempting to get all users.");
-        List<UserDto> users = userRepo.findAll()
-                .stream()
-                .map(userMapper::toDto)
-                .toList();
-        log.info("All users returned.");
-        return users;
+    public void deleteOwnProfile(HttpServletRequest http, Integer id){
+        Integer currentUserId = extractUserIdFromToken(http);
+        if(!id.equals(currentUserId)){
+            log.info("User with id {} attempted to delete another user's profile.", currentUserId);
+            throw new ForbiddenException("Forbidden access.");
+        }
+        log.info("Deleting process of user {} started...",currentUserId);
+        userRepo.deleteById(currentUserId);
+        log.info("User successfully deleted.");
+
     }
 
     private Integer extractUserIdFromToken(HttpServletRequest http) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(http));
     }
 
-    private void checkForUserExistence(Integer id) {
-        log.info("Checking for existence of user with id {}", id);
-        if (!userRepo.existsById(id)) {
-            log.warn("User with id {} not found", id);
-            throw new ResourceNotFoundException("User with id " + id + " not found");
-        }
+    //admin operations
+    public List<UserResponse> getAll() {
+        log.info("Attempting to get all users.");
+        List<UserResponse> users = userRepo.findAll()
+                .stream()
+                .map(userMapper::toResponse)
+                .toList();
+        log.info("All users returned.");
+        return users;
     }
 
-    public void deleteUser(Long userId) {
+    public void deleteUser(Integer userId) {
+        log.info("Deleting process of user {} started by admin",userId);
+        userRepo.deleteById(userId);
+        log.info("User successfully deleted.");
     }
 
-    public void deleteOwnProfile() {
-    }
 }
