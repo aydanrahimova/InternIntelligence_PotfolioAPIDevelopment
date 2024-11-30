@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ProjectRepo extends JpaRepository<Project,Long> {
-    Optional<Project> findByUserIdAndId(Long userId, Long projectId);
-    List<Project> findAllByUserId(Long userId);
+public interface ProjectRepo extends JpaRepository<Project,Integer> {
+    Optional<Project> findByUserIdAndId(Integer userId, Integer projectId);
+    List<Project> findAllByUserId(Integer userId);
 }

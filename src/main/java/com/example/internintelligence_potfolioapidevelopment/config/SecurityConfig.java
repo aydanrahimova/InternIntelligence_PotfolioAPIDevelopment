@@ -32,8 +32,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(AuthUrlMapping.PERMIT_ALL.getUrls()).permitAll()
                         .requestMatchers(AuthUrlMapping.ANY_AUTHENTICATED.getUrls()).authenticated()
-                        .requestMatchers(AuthUrlMapping.USER.getUrls()).hasAnyAuthority(Role.ROLE_USER.name())
-                        .requestMatchers(AuthUrlMapping.ADMIN.getUrls()).hasAnyAuthority(Role.ROLE_ADMIN.name()))
+                        .requestMatchers(AuthUrlMapping.USER.getUrls()).hasRole("USER")
+                        .requestMatchers(AuthUrlMapping.ADMIN.getUrls()).hasRole(Role.ADMIN.name()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
         ;

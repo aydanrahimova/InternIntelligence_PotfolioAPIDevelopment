@@ -28,14 +28,15 @@ public class SkillService {
 
     public List<SkillDto> getOwnSkills(HttpServletRequest request) {
         log.info("Operation of getting skills of the authenticated user started...");
-        Long userId = extractUserIdFromToken(request);
+
+        Integer userId = extractUserIdFromToken(request);
         return skillRepo.findAllByUserId(userId).stream()
                 .map(skillMapper::toDto)
                 .toList();
     }
 
     public SkillDto addSkill(HttpServletRequest request, SkillDto skillDto) {
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         log.info("Adding new skill for user with id {}...", userId);
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found.", userId);
@@ -48,8 +49,8 @@ public class SkillService {
         return skillMapper.toDto(skill);
     }
 
-    public void deleteSkill(HttpServletRequest request, Long skillId) {
-        Long userId = extractUserIdFromToken(request);
+    public void deleteSkill(HttpServletRequest request, Integer skillId) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Deleting skill with id {} for user with id {}...", skillId, userId);
         Skill skill = skillRepo.findById(skillId).orElseThrow(() -> {
             log.warn("Failed to delete skill: Skill with id {} not found.", skillId);
@@ -59,8 +60,8 @@ public class SkillService {
         log.info("Skill deleted successfully for user with id {}", userId);
     }
 
-    public SkillDto editSkill(HttpServletRequest request, Long skillId, SkillDto skillDto) {
-        Long userId = extractUserIdFromToken(request);
+    public SkillDto editSkill(HttpServletRequest request, Integer skillId, SkillDto skillDto) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Editing skill with id {} for user with id {}...", skillId, userId);
         Skill skill = skillRepo.findById(skillId).orElseThrow(() -> {
             log.warn("Failed to edit skill: Skill with id {} not found.", skillId);
@@ -72,11 +73,11 @@ public class SkillService {
         return skillMapper.toDto(skill);
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest request) {
+    private Integer extractUserIdFromToken(HttpServletRequest request) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(request));
     }
 
-    public List<SkillDto> getAllSkillsByUserId(Long userId) {
+    public List<SkillDto> getAllSkillsByUserId(Integer userId) {
         log.info("Process of getting another user's skills stared");
         if (!userRepo.existsById(userId)) {
             log.warn("Failed to get skills: User with id {} not found.", userId);

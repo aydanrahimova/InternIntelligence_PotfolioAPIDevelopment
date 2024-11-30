@@ -1,3 +1,4 @@
+
 package com.example.internintelligence_potfolioapidevelopment.controller;
 
 import com.example.internintelligence_potfolioapidevelopment.dto.ProjectDto;
@@ -19,7 +20,7 @@ public class ProjectController {
 
     @Operation(summary = "Retrieves another user's project list")
     @GetMapping("/users/{userId}")
-    public List<ProjectDto> getProjectsByUserId(@PathVariable Long userId) {
+    public List<ProjectDto> getProjectsByUserId(@PathVariable Integer userId) {
         return projectService.getAllProjectsByUserId(userId);
     }
 
@@ -35,12 +36,13 @@ public class ProjectController {
     }
 
     @PutMapping("/edit/{projectId}")
-    public ProjectDto editProject(HttpServletRequest request, @PathVariable Long projectId, @Validated @RequestBody ProjectDto project) {
+    public ProjectDto editProject(HttpServletRequest request, @PathVariable Integer projectId, @Validated @RequestBody ProjectDto project) {
         return projectService.editProject(request, projectId, project);
     }
 
     @DeleteMapping("/delete/{projectId}")
-    public void deleteProject(HttpServletRequest request, @PathVariable Long projectId) {
+    public void deleteProject(HttpServletRequest request, @PathVariable Integer projectId) {
         projectService.deleteProject(request, projectId);
     }
 }
+

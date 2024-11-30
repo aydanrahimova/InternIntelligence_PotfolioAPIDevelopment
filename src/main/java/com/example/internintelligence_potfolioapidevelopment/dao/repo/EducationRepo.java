@@ -7,10 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface EducationRepo extends JpaRepository<Education,Long> {
+public interface EducationRepo extends JpaRepository<Education,Integer> {
 
-    Optional<Education> findByUserIdAndId(Long userId, Long educationId);
-    List<Education> findAllByUserId(Long userId);
+    Optional<Education> findByUserIdAndId(Integer userId, Integer educationId);
+    List<Education> findAllByUserId(Integer userId);
 
-    List<Education> findByUserId(Long id);
+    List<Education> findByUserId(Integer id);
 }

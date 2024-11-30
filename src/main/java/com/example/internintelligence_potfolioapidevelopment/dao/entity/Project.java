@@ -17,7 +17,7 @@ import java.time.LocalDate;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String name;//255
     private String description;//2000
     private LocalDate startTime;//past

@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 
 public class SkillDto {
     @NotBlank(message = "Skill is required.")
-    private String skillName;
+    private String name;
     private String level;
 }

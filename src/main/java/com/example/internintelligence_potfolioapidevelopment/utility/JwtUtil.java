@@ -39,7 +39,7 @@ public class JwtUtil {
         return key;
     }
 
-    public String tokenCreation(User user) {
+    public String createToken(User user) {
         key = initializeKey();
         user = userRepo.findByEmail(user.getEmail()).orElseThrow();
 
@@ -48,7 +48,7 @@ public class JwtUtil {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
         Map<String, Object> claimsMap = new HashMap<>();
-        claimsMap.put("authorities", roles);
+        claimsMap.put("authorities",roles);
         claimsMap.put("user_id", user.getId());
 
         Date tokenCreateTime = new Date();
@@ -88,8 +88,8 @@ public class JwtUtil {
         return extractClaim(token,Claims::getExpiration);
     }
 
-    public Long getUserId(Claims claims){
-        return (Long) claims.get("user_id");
+    public Integer getUserId(Claims claims){
+        return (Integer) claims.get("user_id");
     }
 
     public String extractEmail(String token){

@@ -19,7 +19,7 @@ public class ExperienceController {
 
     @Operation(summary = "Retrieves another user's experience list")
     @GetMapping("/users/{userId}")
-    public List<ExperienceDto> getAllExperienceByUserId(@PathVariable Long userId){
+    public List<ExperienceDto> getAllExperienceByUserId(@PathVariable Integer userId){
         return experienceService.getAllExperienceByUserId(userId);
     }
 
@@ -36,13 +36,13 @@ public class ExperienceController {
     }
 
     @PutMapping("/edit/{experienceId}")
-    public ExperienceDto editExperience(HttpServletRequest request,@PathVariable Long experienceId,@Validated @RequestBody ExperienceDto experienceDto){
+    public ExperienceDto editExperience(HttpServletRequest request,@PathVariable Integer experienceId,@Validated @RequestBody ExperienceDto experienceDto){
         return experienceService.editExperience(request,experienceId,experienceDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{experienceId}")
-    public void deleteExperience(HttpServletRequest request,@PathVariable Long experienceId){
+    public void deleteExperience(HttpServletRequest request,@PathVariable Integer experienceId){
         experienceService.deleteExperience(request,experienceId);
     }
 

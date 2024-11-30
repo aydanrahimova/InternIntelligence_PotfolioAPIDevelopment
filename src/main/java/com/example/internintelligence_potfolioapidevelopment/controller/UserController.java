@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -20,7 +20,7 @@ public class UserController {
 
     @Operation(summary = "Retrieve another user's profile by their ID")
     @GetMapping("/{id}")
-    public UserDto getUserById(@PathVariable Long id) {
+    public UserDto getUserById(@PathVariable Integer id) {
         return userService.getById(id);
     }
 

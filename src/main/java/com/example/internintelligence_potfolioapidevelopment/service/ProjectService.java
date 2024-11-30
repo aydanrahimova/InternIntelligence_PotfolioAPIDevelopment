@@ -26,7 +26,7 @@ public class ProjectService {
     private final JwtUtil jwtUtil;
 
     public List<ProjectDto> getOwnProjects(HttpServletRequest request) {
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of getting projects of the authenticated user started...");
         return projectRepo.findAllByUserId(userId).stream()
                 .map(projectMapper::toDto)
@@ -34,7 +34,7 @@ public class ProjectService {
     }
 
     public ProjectDto addProject(HttpServletRequest request, ProjectDto projectDto) {
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of adding new project for user with id {} started...", userId);
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found.", userId);
@@ -47,8 +47,8 @@ public class ProjectService {
         return projectMapper.toDto(project);
     }
 
-    public void deleteProject(HttpServletRequest request, Long projectId) {
-        Long userId = extractUserIdFromToken(request);
+    public void deleteProject(HttpServletRequest request, Integer projectId) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of deleting project with id {} for user with id {} started...", projectId, userId);
         Project project = projectRepo.findById(projectId).orElseThrow(() -> {
             log.warn("Failed to delete project: Project with id {} not found.", projectId);
@@ -58,8 +58,8 @@ public class ProjectService {
         log.info("Project deleted successfully for user with id {}", userId);
     }
 
-    public ProjectDto editProject(HttpServletRequest request, Long projectId, ProjectDto projectDto) {
-        Long userId = extractUserIdFromToken(request);
+    public ProjectDto editProject(HttpServletRequest request, Integer projectId, ProjectDto projectDto) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Process of editing project with id {} for user with id {} started....", projectId, userId);
         Project project = projectRepo.findById(projectId).orElseThrow(() -> {
             log.warn("Failed to edit project: Project with id {} not found.", projectId);
@@ -71,11 +71,11 @@ public class ProjectService {
         return projectMapper.toDto(project);
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest request) {
+    private Integer extractUserIdFromToken(HttpServletRequest request) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(request));
     }
 
-    public List<ProjectDto> getAllProjectsByUserId(Long userId){
+    public List<ProjectDto> getAllProjectsByUserId(Integer userId){
         log.info("Operation of getting projects of the user with id {} started...",userId);
         if (!userRepo.existsById(userId)){
             log.warn("Failed to get projects: User with id {} not found",userId);

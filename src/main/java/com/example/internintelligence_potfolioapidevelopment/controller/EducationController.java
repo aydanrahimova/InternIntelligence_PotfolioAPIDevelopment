@@ -20,7 +20,7 @@ public class EducationController {
 
     @Operation(summary = "Retrieves another user's education list")
     @GetMapping("/users/{userId}")
-    public List<EducationDto> getAllEducationByUserId(@PathVariable Long userId){
+    public List<EducationDto> getAllEducationByUserId(@PathVariable Integer userId){
         return educationService.getAllEducationByUserId(userId);
     }
 
@@ -37,13 +37,13 @@ public class EducationController {
     }
 
     @PutMapping("/edit/{eductionId}")
-    public EducationDto editEducationOfUser(HttpServletRequest request, @PathVariable Long eductionId, @Validated @RequestBody EducationDto educationDto) {
+    public EducationDto editEducationOfUser(HttpServletRequest request, @PathVariable Integer eductionId, @Validated @RequestBody EducationDto educationDto) {
         return educationService.editEducationOfUser(request, eductionId, educationDto);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/delete/{educationId}")
-    public void deleteEducationOfUser(HttpServletRequest request, @PathVariable Long educationId) {
+    public void deleteEducationOfUser(HttpServletRequest request, @PathVariable Integer educationId) {
         educationService.deleteEducationOfUser(request, educationId);
     }
 

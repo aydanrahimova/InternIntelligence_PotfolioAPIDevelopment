@@ -18,7 +18,7 @@ import java.time.LocalDate;
 public class Education {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Integer id;
     private String schoolName;
     private EducationDegree degree;
     private String fieldOfStudy;

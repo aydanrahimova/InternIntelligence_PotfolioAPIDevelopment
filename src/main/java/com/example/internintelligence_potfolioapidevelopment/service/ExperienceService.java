@@ -28,7 +28,7 @@ public class ExperienceService {
 
     public List<ExperienceDto> getExperience(HttpServletRequest request) {
         log.info("Operation of getting experience of the user is started...");
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         List<ExperienceDto> experienceDtoList = experienceRepo.findAllByUserId(userId)
                 .stream()
                 .map(experienceMapper::toDto)
@@ -38,7 +38,7 @@ public class ExperienceService {
     }
 
     public ExperienceDto addExperience(HttpServletRequest request, ExperienceDto experienceDto) {
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of adding new experience to the user is started...");
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found.", userId);
@@ -51,8 +51,8 @@ public class ExperienceService {
         return experienceMapper.toDto(experience);
     }
 
-    public void deleteExperience(HttpServletRequest request, Long experienceId) {
-        Long userId = extractUserIdFromToken(request);
+    public void deleteExperience(HttpServletRequest request, Integer experienceId) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of deleting experience of the user is started....");
 //        User user = userRepo.findById(userId).orElseThrow(() -> {
 //            log.info("User with id {} not found", userId);
@@ -67,8 +67,8 @@ public class ExperienceService {
         log.info("Experience successfully deleted.");
     }
 
-    public ExperienceDto editExperience(HttpServletRequest request, Long experienceId, ExperienceDto experienceDto) {
-        Long userId = extractUserIdFromToken(request);
+    public ExperienceDto editExperience(HttpServletRequest request, Integer experienceId, ExperienceDto experienceDto) {
+        Integer userId = extractUserIdFromToken(request);
         log.info("Operation of editing experience of the user is started....");
         Experience experience = experienceRepo.findById(experienceId)
                 .orElseThrow(() -> {
@@ -82,7 +82,7 @@ public class ExperienceService {
     }
 
 
-    public List<ExperienceDto> getAllExperienceByUserId(Long userId) {
+    public List<ExperienceDto> getAllExperienceByUserId(Integer userId) {
         log.info("Process of getting another user's experience stared");
         if (!userRepo.existsById(userId)) {
             log.warn("User with id {} not found.", userId);
@@ -96,7 +96,7 @@ public class ExperienceService {
         return experienceDtoList;
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest request) {
+    private Integer extractUserIdFromToken(HttpServletRequest request) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(request));
     }
 }

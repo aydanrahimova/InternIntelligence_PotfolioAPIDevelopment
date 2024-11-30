@@ -10,6 +10,7 @@ import com.example.internintelligence_potfolioapidevelopment.exception.ResourceN
 import com.example.internintelligence_potfolioapidevelopment.mapper.*;
 import com.example.internintelligence_potfolioapidevelopment.utility.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -21,6 +22,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional
 public class UserService {
 
     private final UserRepo userRepo;
@@ -29,7 +31,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     public UserDto getOwnProfile(HttpServletRequest http) {
-        Long userId = extractUserIdFromToken(http);
+        Integer userId = extractUserIdFromToken(http);
         log.info("Getting own profile operation is started.");
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found.", userId);
@@ -39,9 +41,8 @@ public class UserService {
         return userMapper.toDto(user);
     }
 
-    public UserDto getById(Long id) {
+    public UserDto getById(Integer id) {
         log.info("Attempting to get profile of user with id {}", id);
-
         return userRepo.findById(id).map(user -> {
             log.info("Successfully retrieved user with id {}", id);
             return userMapper.toDto(user);
@@ -52,7 +53,7 @@ public class UserService {
     }
 
     public UserDto editUserInfo(HttpServletRequest http, UserDetailsRequestDto userDetailsRequestDto) {
-        Long userId = extractUserIdFromToken(http);
+        Integer userId = extractUserIdFromToken(http);
         log.info("Editing user operation is started...");
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found", userId);
@@ -65,7 +66,7 @@ public class UserService {
     }
 
     public void changePassword(HttpServletRequest http, ChangePasswordDto changePasswordDto) {
-        Long userId = extractUserIdFromToken(http);
+        Integer userId = extractUserIdFromToken(http);
         log.info("Changing password operation is started...");
         User user = userRepo.findById(userId).orElseThrow(() -> {
             log.warn("User with id {} not found", userId);
@@ -92,11 +93,11 @@ public class UserService {
         return users;
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest http) {
+    private Integer extractUserIdFromToken(HttpServletRequest http) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(http));
     }
 
-    private void checkForUserExistence(Long id) {
+    private void checkForUserExistence(Integer id) {
         log.info("Checking for existence of user with id {}", id);
         if (!userRepo.existsById(id)) {
             log.warn("User with id {} not found", id);

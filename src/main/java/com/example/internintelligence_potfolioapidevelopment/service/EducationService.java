@@ -29,7 +29,7 @@ public class EducationService {
 
     public List<EducationDto> getAllOwnEducation(HttpServletRequest request) {
         log.info("Operation of getting education of the user is started...");
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         log.info("All education of user is returned.");
         return educationRepo.findAllByUserId(userId)
                 .stream()
@@ -37,9 +37,9 @@ public class EducationService {
                 .toList();
     }
 
-    public void deleteEducationOfUser(HttpServletRequest request, Long educationId) {
+    public void deleteEducationOfUser(HttpServletRequest request, Integer educationId) {
         log.info("Deleting education with id {} started...", educationId);
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         Education education = educationRepo.findById(educationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Education with ID " + educationId + " not found."));
         if (!education.getUser().getId().equals(userId)) {
@@ -52,7 +52,7 @@ public class EducationService {
 
     public EducationDto addEducation(HttpServletRequest request, EducationDto dto) {
         log.info("Operation of adding new education to user is started...");
-        Long id = extractUserIdFromToken(request);
+        Integer id = extractUserIdFromToken(request);
         log.info("Attempting to add new education to user with id {}", id);
         User user = userRepo.findById(id).orElseThrow(() -> {
             log.warn("Failed to add new education: User with id {} not found", id);
@@ -65,9 +65,9 @@ public class EducationService {
         return educationMapper.toDto(education);
     }
 
-    public EducationDto editEducationOfUser(HttpServletRequest request, Long educationId, EducationDto educationDto) {
+    public EducationDto editEducationOfUser(HttpServletRequest request, Integer educationId, EducationDto educationDto) {
         log.info("Editing education with id {} started...", educationId);
-        Long userId = extractUserIdFromToken(request);
+        Integer userId = extractUserIdFromToken(request);
         Education education = educationRepo.findById(educationId).orElseThrow(() -> {
             log.warn("Failed to edit education: Education with id {} not found", educationId);
             return new ResourceNotFoundException("Education not found");
@@ -82,12 +82,12 @@ public class EducationService {
         return educationMapper.toDto(education);
     }
 
-    private Long extractUserIdFromToken(HttpServletRequest request) {
+    private Integer extractUserIdFromToken(HttpServletRequest request) {
         return jwtUtil.getUserId(jwtUtil.resolveClaims(request));
     }
 
 
-    public List<EducationDto> getAllEducationByUserId(Long userId) {
+    public List<EducationDto> getAllEducationByUserId(Integer userId) {
         log.info("Getting all education of the user with id {} started", userId);
         if (!userRepo.existsById(userId)) {
             log.info("Failed to get education list: User with id {} not found", userId);
