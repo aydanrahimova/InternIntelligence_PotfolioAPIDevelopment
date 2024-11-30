@@ -54,10 +54,6 @@ public class ExperienceService {
     public void deleteExperience(HttpServletRequest request, Integer experienceId) {
         Integer userId = extractUserIdFromToken(request);
         log.info("Operation of deleting experience of the user is started....");
-//        User user = userRepo.findById(userId).orElseThrow(() -> {
-//            log.info("User with id {} not found", userId);
-//            return new ResourceNotFoundException("USER_NOT_FOUND");
-//        });
         Experience experience = experienceRepo.findById(experienceId)
                 .orElseThrow(() -> {
                     log.warn("Failed to delete experience: Experience with id {} not found.", experienceId);
